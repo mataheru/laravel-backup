@@ -2,6 +2,7 @@
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use Illuminate\Support\Facades\Storage;
 use AWS;
 use Config;
 use File;
@@ -61,13 +62,19 @@ class BackupCommand extends BaseCommand
 			if ($this->option('upload-s3'))
 			{
 				$this->uploadS3();
-				$this->line($this->colors->getColoredString("\n".'Upload complete.'."\n",'green'));
+				$this->line($this->colors->getColoredString("\n".'Upload S3 complete.'."\n",'green'));
+			}
 
-				if ($this->option('keep-only-s3'))
-				{
-					File::delete($this->filePath);
-					$this->line($this->colors->getColoredString("\n".'Removed dump as it\'s now stored on S3.'."\n",'green'));
-				}
+			if ($this->option('upload-disk'))
+			{
+				$this->uploadDisk();
+				$this->line($this->colors->getColoredString("\n".'Upload Disk complete.'."\n",'green'));
+			}
+
+			if ($this->option('keep-only-cloud'))
+			{
+				File::delete($this->filePath);
+				$this->line($this->colors->getColoredString("\n".'Removed dump as it\'s now stored on S3.'."\n",'green'));
 			}
 		}
 		else
@@ -127,6 +134,12 @@ class BackupCommand extends BaseCommand
 			'Key'        => $this->getS3DumpsPath() . '/' . $this->fileName,
 			'SourceFile' => $this->filePath,
 		));
+	}
+
+	protected function uploadDisk($folder = 'backups')
+	{
+		$disk = $this->option('upload-disk');
+		Storage::disk($disk)->putFileAs($folder, new File($this->filePath), $this->fileName);
 	}
 
 	protected function getS3DumpsPath()

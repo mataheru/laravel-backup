@@ -31,7 +31,12 @@ $ php artisan db:backup --database=mysql
 $ php artisan db:backup --upload-s3 your-bucket
 ```
 
-You can use the `--keep-only-s3` option if you don't want to keep a local copy of the SQL dump.
+###### Upload to Any other laravel Filesystem disk
+```sh
+$ php artisan db:backup --upload-disk your-disk-config-name
+```
+
+You can use the `--keep-only-cloud` option if you don't want to keep a local copy of the SQL dump.
 
 Uses the [aws/aws-sdk-php-laravel](https://github.com/aws/aws-sdk-php-laravel) package which needs to be [configured](https://github.com/aws/aws-sdk-php-laravel#configuration).
 

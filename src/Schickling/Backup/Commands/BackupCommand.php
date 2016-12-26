@@ -59,6 +59,9 @@ class BackupCommand extends BaseCommand
 				$this->line(sprintf($this->colors->getColoredString("\n".'Database backup was successful. %s was saved in the dumps folder.'."\n",'green'), $this->fileName));
 			}
 
+			/*
+			 * Amazone S3 Cloud
+			 */
 			if ($this->option('upload-s3'))
 			{
 				$this->uploadS3();
@@ -139,6 +142,10 @@ class BackupCommand extends BaseCommand
 	protected function uploadDisk($folder = 'backups')
 	{
 		$disk = $this->option('upload-disk');
+		if (!Storage::disk($disk)->directories()->has($folder))
+		{
+			throw new Exception("Folder " . $folder . ' does not exist on disk ' . $disk);
+		}
 		Storage::disk($disk)->putFileAs($folder, new File($this->filePath), $this->fileName);
 	}
 

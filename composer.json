@@ -1,5 +1,5 @@
 {
-    "name": "schickling/backup",
+    "name": "mataheru/laravel-backup",
     "description": "Backup and restore database support for Laravel 4 applications",
     "authors": [
         {
